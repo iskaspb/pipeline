@@ -1,0 +1,15 @@
+# vs code
+.vscode/
+.vscode/*
+*.code-workspace
+!.vscode/launch-overrides.json
+!.vscode/launch.json.cog.py
+!.vscode/settings.json
+!.vscode/tasks.json
+
+# CMAKE / BUILD
+build/
+CMakeCache.txt
+CMakeFiles*
+
+*~
