@@ -26,7 +26,7 @@ namespace detail
 template<typename... Nodes>
 struct pipeline: Nodes...
 {
-    using Nodes::process...;
+    //using Nodes::process...;
 
     template<size_t id> auto& get()
     {
@@ -84,5 +84,5 @@ struct traits {};
 int main()
 {
     pipeline_engine<traits, node>::pipeline p;
-    p.process("hello");
+    p.get<0>().process("hello");
 }
