@@ -33,6 +33,11 @@ struct pipeline: Nodes...
         using Node = detail::nth_type_t<id, Nodes...>;
         return static_cast<Node&>(*this);
     }
+
+    template<typename Node> Node& get_node()
+    {
+        return static_cast<Node&>(*this);
+    }
 };
 
 
@@ -45,7 +50,16 @@ namespace detail
 template<typename Traits, template<typename, size_t> class... Nodes>
 struct pipeline_engine
 {
+    using traits = Traits;
     using pipeline = decltype(detail::make_pipeline<Traits, Nodes...>(std::make_index_sequence<sizeof...(Nodes)>{}));
+
+    template<typename Msg>
+    void process(const Msg& msg)
+    {
+        p.template get<0>().process(msg);
+    }
+
+    pipeline p;
 };
 
 
@@ -75,14 +89,25 @@ struct node
     {
         //auto thiz = static_cast<typename pipeline_engine::pipeline&>(*this);
         //static_assert(std::is_same<decltype(*this), decltype(thiz)>::value, "Should be the same type");
-        std::cout << "Process : " << msg << std::endl;      
+        std::cout << "Process[" << I << "] : " << msg << std::endl;
+
     }
 };
+
+template<typename Traits, size_t I>
+struct terminal
+{
+    void process(std::string msg)
+    {
+        std::cout << "Finish : " << msg << std::endl;   
+    }
+};
+
 
 struct traits {};
 
 int main()
 {
-    pipeline_engine<traits, node>::pipeline p;
-    p.get<0>().process("hello");
+    pipeline_engine<traits, node, node, node, terminal> pe;
+    pe.process("hello");
 }
